@@ -19,5 +19,7 @@ try:
     data["p_value"] = data.p_value.str.rstrip(r'*').astype(float)
 except AttributeError:
     pass
-snps_of_interest = data[data.p_value < data.bh_crit].genomic_location
+snps_of_interest = (data[data.p_value < data.bh_crit].genomic_location
+                    .str.replace(" ", "")
+                    .str.replace(r"(.+_[0-9]+).+", r"\1"))
 snps_of_interest.to_csv(args[3], sep="\n", index=False)
