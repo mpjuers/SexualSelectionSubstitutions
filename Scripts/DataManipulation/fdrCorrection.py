@@ -15,6 +15,9 @@ data.columns = (data.columns
                 .str.replace('-', '_'))
 
 data["bh_crit"] = pd.Series(range(1, len(data.index) + 1)) / n_snps * fdr
-data["p_value"] = data.p_value.str.rstrip(r'*').astype(float)
+try:
+    data["p_value"] = data.p_value.str.rstrip(r'*').astype(float)
+except AttributeError:
+    pass
 snps_of_interest = data[data.p_value < data.bh_crit].genomic_location
 snps_of_interest.to_csv(args[3], sep="\n", index=False)

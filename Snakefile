@@ -1,5 +1,5 @@
 # Number of SNPs for each trait dataset
-n_snps={"matingBehavior": 2_400_000}
+n_snps={"matingBehavior": 2_400_000, "aggression": 1_914_528}
 
 
 rule all:
