@@ -19,6 +19,12 @@ rule fdr:
         " {params.n_snps} {input.data} {output}"
 
 
+rule get_dmel_genome:
+    output = "Data/Genomes/dMelRefSeq.fna.gz"
+    script:
+        "Scripts/GetData/dMelGenome.py"
+
+
 rule clean:
     shell:
         "rm -r Data/Interest"
