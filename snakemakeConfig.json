@@ -1,0 +1,10 @@
+{
+    "traits": {
+        "matingBehavior": {
+            "n_snps": 2_400_000
+        },
+        "aggression": {
+            "n_snps": 1_914_528
+        }
+    }
+}
