@@ -9,7 +9,6 @@ configfile:
 rule all:
     input:
         ["Data/Interest/" + x + ".interest.txt" for x in config["traits"].keys()],
-        "Data/Genomes/dMelRefSeq.fna.gz"
 
 
 rule fdr:
@@ -24,13 +23,6 @@ rule fdr:
         " {params.n_snps} {input.data} {output}"
 
 
-rule get_dmel_genome:
-    output:
-        "Data/Genomes/dMelRefSeq.fna.gz"
-    shell:
-        "python Scripts/GetData/dMelGenome.py"
-
-
 rule clean:
     shell:
         "rm -r Data/Interest"
@@ -38,4 +30,4 @@ rule clean:
 
 rule clean_all:
     shell:
-        "rm -r Data/Interest Data/Genomes"
+        "rm -r Data/Interest"
