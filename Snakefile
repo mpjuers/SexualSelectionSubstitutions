@@ -9,7 +9,8 @@ configfile:
 rule all:
     input:
         ["Data/Interest/" + trait + ".interest.txt" for trait in config["traits"].keys()],
-        ["Data/InterestSeqs/" + trait + ".interest.fasta" for trait in config["traits"].keys()]
+        ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in config["traits"].keys()],
+        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in config["traits"].keys()]
 
 
 rule fdr:
@@ -28,15 +29,32 @@ rule get_seqs:
     input:
         snps = "Data/Interest/{trait}.interest.txt"
     output:
-        seqs = "Data/InterestSeqs/{trait}.interest.fasta"
+        seqs = "Data/InterestSeqs/{trait}.interest.fasta",
+        nsnps = "Data/InterestSeqs/{trait}.interest.nsnps"
+    shadow:
+        "full"
     shell:
-        ("python Scripts/GetData/windows.py {input.snps} {output.seqs} "
-         + config["email"])
+         ("wc -l {input.snps} > {output.nsnps}"
+          + " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
+          + config["email"])
 
 
+rule multialign:
+    input: 
+        "Data/InterestSeqs/{trait}.interest.fasta"
+    output:
+        "Data/Alignments/{trait}.interest.aligned.fasta"
+    shell:
+        ("sh Scripts/DataManipulation/alignSeqsOfInterest.sh {input} {output}"
+         + " " + config["muscleparams"])
+        
+
+        
 # Removes everything except initial dependencies.
 rule clean:
     shell:
         "rm -r"
+        " Logs"
         " Data/Interest"
         " Data/InterestSeqs"
+        " Data/Alignments"
