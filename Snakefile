@@ -10,7 +10,8 @@ rule all:
     input:
         ["Data/Interest/" + trait + ".interest.txt" for trait in config["traits"].keys()],
         ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in config["traits"].keys()],
-        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in config["traits"].keys()]
+        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in config["traits"].keys()],
+        "Data/Genomes/dMelRefSeq.fna.gz"
 
 
 rule fdr:
@@ -47,8 +48,14 @@ rule multialign:
     shell:
         ("sh Scripts/DataManipulation/alignSeqsOfInterest.sh {input} {output}"
          + " " + config["muscleparams"])
-        
 
+
+rule get_dmel_genome:
+    output:
+        "Data/Genomes/dMelRefSeq.fna.gz"
+    script:
+        "Scripts/GetData/dMelGenome.py"
+        
         
 # Removes everything except initial dependencies.
 rule clean:
