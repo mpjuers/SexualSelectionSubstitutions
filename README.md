@@ -7,5 +7,9 @@ Snakefile usage:
 
 snakemakeConfig:
     json object structure:
+        email: The user email for Entrez queries.
+        muscleparams: Additional parameters to send to Muscle when aligning.
+            Format is verbatim as expected in Muscle command-line tool.
+            e.g., "-maxiters 16"
         traits: One key for each trait. Each entry should include the following keys.
             n_snps: The number of SNPs identified by the study. Used for FDR correction.
