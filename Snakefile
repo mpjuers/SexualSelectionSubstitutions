@@ -8,7 +8,8 @@ configfile:
 
 rule all:
     input:
-        ["Data/Interest/" + x + ".interest.txt" for x in config["traits"].keys()],
+        ["Data/Interest/" + trait + ".interest.txt" for trait in config["traits"].keys()],
+        ["Data/InterestSeqs/" + trait + ".interest.fasta" for trait in config["traits"].keys()]
 
 
 rule fdr:
@@ -23,11 +24,19 @@ rule fdr:
         " {params.n_snps} {input.data} {output}"
 
 
+rule get_seqs:
+    input:
+        snps = "Data/Interest/{trait}.interest.txt"
+    output:
+        seqs = "Data/InterestSeqs/{trait}.interest.fasta"
+    shell:
+        ("python Scripts/GetData/windows.py {input.snps} {output.seqs} "
+         + config["email"])
+
+
+# Removes everything except initial dependencies.
 rule clean:
     shell:
-        "rm -r Data/Interest"
-
-
-rule clean_all:
-    shell:
-        "rm -r Data/Interest"
+        "rm -r"
+        " Data/Interest"
+        " Data/InterestSeqs"

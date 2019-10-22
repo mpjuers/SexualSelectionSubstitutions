@@ -3,9 +3,7 @@ An analysis of selection regimes in regions of inter- and intrasexual selection.
 
 Snakefile usage:
     snakemake: Build the project.
-    snakemake clean: Remove certain generated files.
-    snakemake clean_all: Remove all generated files. This will restore the Data
-        directory to the state of the Repository.
+    snakemake clean: Remove all generated files.
 
 snakemakeConfig:
     json object structure:
