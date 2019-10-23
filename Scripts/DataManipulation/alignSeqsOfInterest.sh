@@ -1,12 +1,8 @@
 #!/bin/bash
+# usage: sh alignSeqsOfInterest.sh <ref.fasta> <input.fasta> <output.fasta>
 
-# usage: sh alignSeqsOfInterest.sh <input.fasta> <output.fasta> <args>
-# In workflow, <args> is read from snakemakeConfig["muscleparams"].
-
-if [ ! -d Logs ]; then
-  mkdir -p Logs;
-fi
-logfile=${1##*/}
-logfile=${logfile%.*}
-
-muscle -log Logs/"$logfile".multialign.log -in ${1} -out ${2} ${3} 
+bwa index ${1}
+bwa mem ${1} ${2} | \
+    samtools view -S -b - | \
+    samtools bam2fq - | \
+    seqtk seq -A - > ${3}
