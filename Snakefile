@@ -4,13 +4,14 @@
 
 configfile:
     "snakemakeConfig.json"
+traits = config["traits"].keys()
 
 
 rule all:
     input:
-        ["Data/Interest/" + trait + ".interest.txt" for trait in config["traits"].keys()],
-        ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in config["traits"].keys()],
-        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in config["traits"].keys()],
+        ["Data/Interest/" + trait + ".interest.txt" for trait in traits],
+        ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in traits],
+        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in traits],
         "Data/Genomes/dMelRefSeq.fna.gz"
 
 
@@ -40,15 +41,16 @@ rule get_seqs:
           + config["email"])
 
 
-rule multialign:
-    input: 
-        "Data/InterestSeqs/{trait}.interest.fasta"
+rule align_interest:
+    input:
+        query = "Data/InterestSeqs/{trait}.interest.fasta",
+        ref = "Data/Genomes/dMelRefSeq.fna"
     output:
-        "Data/Alignments/{trait}.interest.aligned.fasta"
+        align = "Data/Alignments/{trait}.interest.aligned.fasta"
     shell:
-        ("sh Scripts/DataManipulation/alignSeqsOfInterest.sh {input} {output}"
-         + " " + config["muscleparams"])
-
+        "sh Scripts/DataManipulation/alignSeqsOfInterest.sh"
+        " {input.ref} {input.query} {output.align}"
+        
 
 rule get_dmel_genome:
     output:
