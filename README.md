@@ -18,3 +18,6 @@ snakemakeConfig.json:
     email: The user email for Entrez queries.
     traits: One key for each trait. Each entry should include the following keys.
         n_snps: The number of SNPs identified by the study. Used for FDR correction.
+
+clusterConfig.json:
+    Configuration parameters for rules on a per-rule basis.
