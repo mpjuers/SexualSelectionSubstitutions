@@ -44,7 +44,7 @@ rule get_seqs:
 rule align_interest:
     input:
         query = "Data/InterestSeqs/{trait}.interest.fasta",
-        ref = "Data/Genomes/dMelRefSeq.fna"
+        ref = "Data/Genomes/dMelRefSeq.fna.gz"
     output:
         align = "Data/Alignments/{trait}.interest.aligned.fasta"
     shell:

@@ -2,10 +2,10 @@
     "email": "mpjuers@indiana.edu",
     "traits": {
         "matingBehavior": {
-            "n_snps": 2_400_000
+            "n_snps": 2400000
         },
         "aggression": {
-            "n_snps": 1_914_528
+            "n_snps": 1914528
         }
     }
 }
