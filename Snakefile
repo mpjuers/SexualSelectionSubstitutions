@@ -11,7 +11,7 @@ rule all:
     input:
         ["Data/Interest/" + trait + ".interest.txt" for trait in traits],
         ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in traits],
-        ["Data/Alignments/" + trait + ".interest.aligned.fasta" for trait in traits],
+        ["Data/Scratch/Alignments/" + trait + ".interest.aligned.fasta" for trait in traits],
         "Data/Genomes/dMelRefSeq.fna.gz"
 
 
@@ -33,8 +33,6 @@ rule get_seqs:
     output:
         seqs = "Data/InterestSeqs/{trait}.interest.fasta",
         nsnps = "Data/InterestSeqs/{trait}.interest.nsnps"
-    shadow:
-        "full"
     shell:
          ("wc -l {input.snps} > {output.nsnps}"
           + " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
@@ -46,7 +44,7 @@ rule align_interest:
         query = "Data/InterestSeqs/{trait}.interest.fasta",
         ref = "Data/Genomes/dMelRefSeq.fna.gz"
     output:
-        align = "Data/Alignments/{trait}.interest.aligned.fasta"
+        align = "Data/Scratch/Alignments/{trait}.interest.aligned.fasta"
     shell:
         "sh Scripts/DataManipulation/alignSeqsOfInterest.sh"
         " {input.ref} {input.query} {output.align}"
@@ -66,4 +64,4 @@ rule clean:
         " Logs"
         " Data/Interest"
         " Data/InterestSeqs"
-        " Data/Alignments"
+        " Data/Scratch/Alignments"

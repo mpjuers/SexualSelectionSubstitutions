@@ -4,13 +4,16 @@
 #PBS -M mpjuers@indiana.edu
 #PBS -l nodes=1:ppn=1:dc2,vmem=16gb,walltime=10:00:00
 #PBS -N main
+#PBS -e $HOME/Projects/SexualSelectionSubstitutions/Logs/Cluster/main.e
+#PBS -o $HOME/Projects/SexualSelectionSubstitutions/Logs/Cluster/main.o
 
 # usage qsub -d ${PWD} </path/to/batchfile/>
 
 export PYENV_VERSION=sexualselection
+module use $HOME/Modules
 module load bwa/0.7.12
 module load samtools/1.9
-# seqtk is in ~/local/bin
+module load seqtk/1.3
 
 export PATH=$HOME/.pyenv/bin:$HOME/local/bin:$PATH
 
