@@ -1,0 +1,14 @@
+#!/bin/bash
+#PBS -V
+
+module load bwa/0.7.12
+module load samtools/1.9
+# seqtk is in ~/local/bin
+
+export PATH=$HOME/local/bin:$PATH
+
+snakemake -j 10 --cluster-config clusterConfig.json --cluster \
+   "qsub -m {cluster.contact} -M {cluster.email} -l
+   nodes=1:ppn={cluster.cores}:dc2,walltime={cluster.walltime},vmem={cluster.memory}
+   -e {cluster.error} -o {cluster.output} -N {cluster.name} -V"
+
