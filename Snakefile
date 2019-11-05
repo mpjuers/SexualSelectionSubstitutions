@@ -2,8 +2,8 @@
 # n_snps={"matingBehavior": 2_400_000, "aggression": 1_914_528}
 
 
-configfile:
-    "snakemakeConfig.json"
+localrules: all, fdr, clean
+configfile: "snakemakeConfig.json"
 traits = config["traits"].keys()
 
 
