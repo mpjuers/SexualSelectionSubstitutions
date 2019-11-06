@@ -24,7 +24,7 @@ def main():
     )
     interest["location"] = interest["location"].astype(int)
     interest.index.rename("Index", inplace=True)
-    summary = pd.read_csv("Data/dMelSummary.csv")
+    summary = pd.read_csv("Data/dmelSummary.csv")
     summary.index.rename("Index", inplace=True)
     summary = summary.replace(",", "", regex=True)
 
