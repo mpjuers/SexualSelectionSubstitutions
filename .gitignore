@@ -106,3 +106,5 @@ Data/
 .snakemake/
 main.*
 Logs/
+**/*.swo
+**/*.swp
