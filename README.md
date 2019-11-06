@@ -8,11 +8,16 @@ Dependencies:
     bwa (0.7.17)
     samtools (1.9)
     seqtk (1.3)
+    pandas (0.25.1)
 
 Snakefile usage:
     snakemake: Build the project.
     snakemake clean: Remove all generated files.
     snakemake target: Generate specified target file.
+
+
+From workdir on cluster:
+    qsub ${PWD} Scripts/Batch/execSnakemake.batch
 
 snakemakeConfig.json:
     email: The user email for Entrez queries.
