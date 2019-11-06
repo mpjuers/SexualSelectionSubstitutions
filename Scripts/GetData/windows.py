@@ -18,15 +18,14 @@ def main():
     outfile = sys.argv[2]
     email = sys.argv[3]
 
-    interest = pd.read_csv(snpfile, header=None)
-    interest[["chrom", "location"]] = interest.iloc[:, 0].str.split(
-        "_", expand=True
-    )
+    interest = pd.read_csv(snpfile, header=0)
+    interest[["chrom", "location", "type"]] = interest.loc[
+        :, "genomic_location"
+    ].str.split("_", expand=True)
     interest["location"] = interest["location"].astype(int)
     interest.index.rename("Index", inplace=True)
     summary = pd.read_csv("Data/dmelSummary.csv")
     summary.index.rename("Index", inplace=True)
-    summary = summary.replace(",", "", regex=True)
 
     seqs = []
     Entrez.email = email
