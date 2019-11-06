@@ -19,20 +19,22 @@ def main():
     email = sys.argv[3]
 
     interest = pd.read_csv(snpfile, header=0)
-    interest[["chrom", "location", "type"]] = interest.loc[
+    interest.columns = interest.columns.str.lower().str.replace(" ", "_")
+    interest[["chrom", "location"]] = interest.loc[
         :, "genomic_location"
-    ].str.split("_", expand=True)
+    ].str.rstrip("_.*").str.replace(" ", "").str.split("_", expand=True)
     interest["location"] = interest["location"].astype(int)
     interest.index.rename("Index", inplace=True)
     summary = pd.read_csv("Data/dmelSummary.csv")
     summary.index.rename("Index", inplace=True)
+    summary.columns = summary.columns.str.lower().str.replace(" ", "_")
 
     seqs = []
     Entrez.email = email
     for index, row in interest.iterrows():
         with Entrez.efetch(
             db="nucleotide",
-            id=summary.loc[summary["Name"] == row["chrom"], "RefSeq"].iat[0],
+            id=summary.loc[summary["name"] == row["chrom"], "refseq"].iat[0],
             rettype="fasta",
             strand=1,
             seq_start=row["location"] - window_size / 2,
