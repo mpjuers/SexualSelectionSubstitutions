@@ -10,9 +10,10 @@ traits = config["traits"].keys()
 rule all:
     input:
         ["Data/Interest/" + trait + ".interest.txt" for trait in traits],
-        ["Data/InterestSeqs/" + trait + ".interest.nsnps" for trait in traits],
+        ["Data/Scratch/InterestSeqs/" + trait + ".interest.nsnps" for trait in traits],
         ["Data/Scratch/Alignments/" + trait + ".interest.aligned.fasta" for trait in traits],
-        "Data/Genomes/dMelRefSeq.fna.gz"
+        "Data/Scratch/Genomes/dMelRefSeq.fna.gz", 
+        "Data/Scratch/Genomes/dMelRefSeq.fna"
 
 
 rule fdr:
@@ -23,45 +24,67 @@ rule fdr:
     params:
         n_snps = lambda wildcards: config["traits"][wildcards.trait]["n_snps"]
     shell:
-        "python Scripts/DataManipulation/fdrCorrection.py"
-        " {params.n_snps} {input.data} {output}"
+        (
+         "python Scripts/DataManipulation/fdrCorrection.py"
+         " {params.n_snps} {input.data} {output}"
+        )
 
 
 rule get_seqs:
     input:
         snps = "Data/Interest/{trait}.interest.txt"
     output:
-        seqs = "Data/InterestSeqs/{trait}.interest.fasta",
-        nsnps = "Data/InterestSeqs/{trait}.interest.nsnps"
+        seqs = "Data/Scratch/InterestSeqs/{trait}.interest.fasta",
+        nsnps = "Data/Scratch/InterestSeqs/{trait}.interest.nsnps"
     shell:
-         ("wc -l {input.snps} > {output.nsnps}"
+         (
+         "wc -l {input.snps} > {output.nsnps}"
           + " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
-          + config["email"])
+          + config["email"]
+          )
+
+
+rule unzipref:
+    input: "Data/Scratch/Genomes/dMelRefSeq.fna.gz"
+    output: "Data/Scratch/Genomes/dMelRefSeq.fna"
+    shell: 
+        (
+         "gzip -dc {input} > {output} &&"
+         " bwa index {output} &&"
+         " samtools faidx {output}"
+        )
 
 
 rule align_interest:
     input:
-        query = "Data/InterestSeqs/{trait}.interest.fasta",
-        ref = "Data/Genomes/dMelRefSeq.fna.gz"
+        query = "Data/Scratch/InterestSeqs/{trait}.interest.fasta",
+        ref = "Data/Scratch/Genomes/dMelRefSeq.fna"
     output:
         align = "Data/Scratch/Alignments/{trait}.interest.aligned.fasta"
+    shadow:
+        "full"
     shell:
-        "sh Scripts/DataManipulation/alignSeqsOfInterest.sh"
-        " {input.ref} {input.query} {output.align}"
-        
+        (
+         "bash Scripts/DataManipulation/alignSeqsOfInterest.sh"
+         " {input.ref} {input.query} {output.align}"
+        )
+
 
 rule get_dmel_genome:
     output:
-        "Data/Genomes/dMelRefSeq.fna.gz"
+        "Data/Scratch/Genomes/dMelRefSeq.fna.gz"
     script:
         "Scripts/GetData/dMelGenome.py"
-        
-        
+
+
 # Removes everything except initial dependencies.
 rule clean:
     shell:
-        "rm -r"
-        " Logs"
-        " Data/Interest"
-        " Data/InterestSeqs"
-        " Data/Scratch/Alignments"
+        (
+         "rm -r"
+         " Logs"
+         " Data/Interest"
+         " Data/InterestSeqs"
+         " Data/Scratch/Alignments"
+         " Data/Scratch/Genomes"
+        )

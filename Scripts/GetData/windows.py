@@ -20,9 +20,10 @@ def main():
 
     interest = pd.read_csv(snpfile, header=0)
     interest.columns = interest.columns.str.lower().str.replace(" ", "_")
-    interest[["chrom", "location"]] = interest.loc[
-        :, "genomic_location"
-    ].str.rstrip("_.*").str.replace(" ", "").str.split("_", expand=True)
+    interest[["chrom", "location"]] = (interest.iloc[:, 0]
+        .str.replace("_[A-Z]{3}?", "")
+	.str.replace(" ", "")
+	.str.split("_", expand=True))
     interest["location"] = interest["location"].astype(int)
     interest.index.rename("Index", inplace=True)
     summary = pd.read_csv("Data/dmelSummary.csv")
