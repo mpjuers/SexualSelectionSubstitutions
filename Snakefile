@@ -82,7 +82,7 @@ rule clean:
     shell:
         (
          "rm -r"
-         " Logs"
+         " Logs/Cluster/*"
          " Data/Interest"
          " Data/InterestSeqs"
          " Data/Scratch/Alignments"

@@ -104,7 +104,6 @@ venv.bak/
 .mypy_cache/
 Data/
 .snakemake/
-main.*
 Logs/
 **/*.swo
 **/*.swp
