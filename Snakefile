@@ -77,14 +77,27 @@ rule get_dmel_genome:
         "Scripts/GetData/dMelGenome.py"
 
 
+rule dirsetup:
+    output:
+        "Logs/Cluster"
+    shell:
+        "bash Scripts/Setup/dirSetup.sh {output}"
+
+
+rule scratchsetup:
+    output:
+        "Data/Scratch"
+    shell:
+        "if [[ ! -h {output} ]]; then ln -s {config.scratchdir} {output}; fi"
+
+
 # Removes everything except initial dependencies.
 rule clean:
     shell:
         (
          "rm -r"
-         " Logs/Cluster/*"
+         " Logs"
          " Data/Interest"
          " Data/InterestSeqs"
-         " Data/Scratch/Alignments"
-         " Data/Scratch/Genomes"
+         " Data/Scratch"
         )
