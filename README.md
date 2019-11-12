@@ -9,6 +9,7 @@ Dependencies:
     samtools (1.9)
     seqtk (1.3)
     pandas (0.25.1)
+    sra-toolkit (2.9.6)
 
 Snakefile usage:
     snakemake: Build the project.
