@@ -13,5 +13,10 @@
         "walltime": "10:00:00",
         "cores": "2",
         "memory": "32g"
+    },
+    "align_bowtie": {
+        "walltime": "48:00:00",
+        "cores": "8",
+        "memory": "120gb"
     }
 }

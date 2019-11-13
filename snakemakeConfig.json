@@ -8,5 +8,10 @@
         "aggression": {
             "n_snps": 1914528
         }
+    },
+    "rules": {
+        "align_bowtie": {
+            "cores": 8
+        }
     }
 }
