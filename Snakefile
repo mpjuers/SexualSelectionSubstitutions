@@ -5,23 +5,28 @@ import itertools
 from os import listdir
 import os.path as path
 
+localrules: all, fdr, clean, scratchsetup, dirsetup
+configfile: "snakemakeConfig.json"
+
 traits = config["traits"].keys()
-accession_files = [f for f in listdir("Data/Identifiers/") if path.isfile(path.join("Data/Identifiers", f))]
+accession_files = [f for f in listdir("Data/Identifiers/") 
+                   if f.endswith(".txt")]
 species = [os.path.basename(f).rstrip(".txt") for f in accession_files]
 accessions = []
 traits_out = []
 species_out = []
+
 for trait in traits:
-    for file in accession_files:
-        with open(file, 'r') as filestream:
+    for f in accession_files:
+        accession = []
+        with open("Data/Identifiers/" + f, 'r') as filestream:
             for line in filestream:
-                accessions.append(line)
-                species_out.append(os.path.basename(file).rstrip.(".txt"))
-                traits_out.append(trait)
-
-
-localrules: all, fdr, clean, scratchsetup, dirsetup
-configfile: "snakemakeConfig.json"
+                if line.strip():
+                    accession.append(line.strip())
+                    species_out.append(path.basename(f).rstrip(".txt"))
+                    traits_out.append(trait)
+        accessions.append(accession)
+accessions_flat = [a for sublist in accessions for a in sublist]
 
 
 rule all:
@@ -31,8 +36,8 @@ rule all:
         expand("Data/Scratch/Alignments/{trait}.interest.aligned.fasta", trait=traits) ,
         expand("Data/Scratch/Alignments/{trait}.index.1.bt2", trait=traits) ,
         expand(
-            "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.bam",
-            zip, trait=traits_out, species=species_out, accession=accessions
+            "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.sorted.bam",
+            zip, trait=traits_out, species=species_out, accession=accessions_flat
             ),
         "Data/Scratch/Genomes/dMelRefSeq.fna.gz", 
         "Data/Scratch/Genomes/dMelRefSeq.fna"
@@ -46,10 +51,8 @@ rule fdr:
     params:
         n_snps = lambda wildcards: config["traits"][wildcards.trait]["n_snps"]
     shell:
-        (
          "python Scripts/DataManipulation/fdrCorrection.py"
          " {params.n_snps} {input.data} {output}"
-        )
 
 
 rule get_seqs:
@@ -59,22 +62,18 @@ rule get_seqs:
         seqs = "Data/Scratch/InterestSeqs/{trait}.interest.fasta",
         nsnps = "Data/Scratch/InterestSeqs/{trait}.interest.nsnps"
     shell:
-         (
-         "wc -l {input.snps} > {output.nsnps}"
-          + " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
-          + config["email"]
-          )
+        "wc -l {input.snps} > {output.nsnps}"
+        " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
+        + config["email"]
 
 
 rule unzipref:
     input: "Data/Scratch/Genomes/dMelRefSeq.fna.gz"
     output: "Data/Scratch/Genomes/dMelRefSeq.fna"
     shell: 
-        (
-         "gzip -dc {input} > {output} &&"
-         " bwa index {output} &&"
-         " samtools faidx {output}"
-        )
+        "gzip -dc {input} > {output} &&"
+        " bwa index {output} &&"
+        " samtools faidx {output}"
 
 
 rule align_interest:
@@ -86,10 +85,8 @@ rule align_interest:
     shadow:
         "full"
     shell:
-        (
-         "bash Scripts/DataManipulation/alignSeqsOfInterest.sh"
-         " {input.ref} {input.query} {output.align}"
-        )
+        "bash Scripts/DataManipulation/alignSeqsOfInterest.sh"
+        " {input.ref} {input.query} {output.align}"
 
 
 rule get_dmel_genome:
@@ -137,26 +134,23 @@ rule align_bowtie:
         "Data/Scratch/Alignments/{trait}.index.3.bt2",
         "Data/Scratch/Alignments/{trait}.index.4.bt2",
         "Data/Scratch/Alignments/{trait}.index.rev.1.bt2",
-        "Data/Scratch/Alignments/{trait}.index.rev.2.bt2"
+        "Data/Scratch/Alignments/{trait}.index.rev.2.bt2",
+        "Data/Identifiers/{species}.txt"
     output:
         "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.sorted.bam"
     shell:
-        (
-         "bash Scripts/DataManipulation/sraToBam.sh"
-         + " Data/Scratch/Alignments/{trait}.fasta"
-         + " {trait}"
-         + " Data/Identifiers/{accession}"
-         + " " + config["rules"]["align_bowtie"]["cores"]
-        )
+        "bash Scripts/DataManipulation/sraToBam.sh"
+        " Data/Scratch/Alignments/{trait}.fasta"
+        " {trait}"
+        " Data/Identifiers/{species}.txt"
+        " " + str(config["rules"]["align_bowtie"]["cores"])
 
 
 # Removes everything except initial dependencies.
 rule clean:
     shell:
-        (
-         "rm -r"
-         " Logs"
-         " Data/Interest"
-         " Data/InterestSeqs"
-         " Data/Scratch"
-        )
+        "rm -r"
+        " Logs"
+        " Data/Interest"
+        " Data/InterestSeqs"
+        " Data/Scratch"
