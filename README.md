@@ -27,3 +27,8 @@ snakemakeConfig.json:
 
 clusterConfig.json:
     Configuration parameters for rules on a per-rule basis.
+Drosophila melanogaster
+    BioProject url: https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=4224886
+
+Drosophila simulans
+    BioProject url: https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=3616273
