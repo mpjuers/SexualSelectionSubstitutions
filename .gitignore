@@ -107,3 +107,5 @@ Data/
 Logs/
 **/*.swo
 **/*.swp
+
+*.ipynb

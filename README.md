@@ -1,7 +1,12 @@
 # SexualSelectionSubstitutions
 An analysis of selection regimes in regions of inter- and intrasexual selection.
 
-*Please use [mathematica-notebook-filter](https://github.com/JP-Ellis/mathematica-notebook-filter) if committing Mathematica notebooks for code cleanliness.*
+*Please use
+[mathematica-notebook-filter](https://github.com/JP-Ellis/mathematica-notebook-filter)
+if committing Mathematica notebooks for code cleanliness.*
+
+*Jupyter notebooks should be converted to `.py` (percent format) or `.md`
+using [Jupytext](https://github.com/mwouts/jupytext).*
 
 ## Dependencies:
 
