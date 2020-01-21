@@ -42,8 +42,8 @@ Configuration parameters for rules on a per-rule basis.
 
 ## Data Sources
 
-- Drosophila melanogaster
-    - BioProject url: https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=4224886
+- *Drosophila melanogaster*
+    - BioProject url: `https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=4224886`
 
-- Drosophila simulans
-    - BioProject url: https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=3616273
+- *Drosophila simulans*
+    - BioProject url: `https://www.ncbi.nlm.nih.gov/bioproject?LinkName=sra_bioproject&from_uid=3616273`
