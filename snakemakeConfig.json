@@ -1,6 +1,6 @@
 {
     "email": "mpjuers@indiana.edu",
-    "scratchdir": "/N/dc2/scratch/mpjuers/SexualSelectionSubstitution",
+    "scratchdir": "N/project/SexualSelection/Scratch",
     "traits": {
         "matingBehavior": {
             "n_snps": 2400000
