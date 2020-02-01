@@ -110,7 +110,9 @@ rule scratchsetup:
     output:
         "Data/Scratch"
     shell:
-        "if [[ ! -h {output} ]]; then ln -s " + config["scratchdir"]  + "{output}; fi"
+        "if [[ ! -h {output} || ( -h {output} && $(readlink -fn {output}) != " + config["scratchdir"] + " ) ]]; then"
+        " ln -s " + config["scratchdir"]  + " {output};"
+        " fi"
 
 
 rule bowtie2index:
