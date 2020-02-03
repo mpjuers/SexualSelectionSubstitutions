@@ -28,7 +28,8 @@ using [Jupytext](https://github.com/mwouts/jupytext).*
 
 ### From workdir on cluster:
 
-`qsub ${PWD} Scripts/Batch/execSnakemake.batch`
+`qsub -d ${PWD} Scripts/Batch/execSnakemake.batch` OR
+`qsub -cwd Scripts/Batch/execSnakemake.batch`
 
 ### snakemakeConfig.json:
 
