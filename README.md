@@ -12,6 +12,8 @@ using [Jupytext](https://github.com/mwouts/jupytext).*
 
 Directories should be PascalCase and files should be camelCase.
 
+Python scripts should be formatted with [Black](https://github.com/psf/black)
+
 ## Dependencies:
 
 - Python 3 (tested with 3.7.0):
