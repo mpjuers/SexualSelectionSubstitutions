@@ -6,13 +6,17 @@ An analysis of selection regimes in regions of inter- and intrasexual selection.
 *Please use
 [mathematica-notebook-filter](https://github.com/JP-Ellis/mathematica-notebook-filter)
 if committing Mathematica notebooks for code cleanliness.*
+Additionally, do not use graphics as input to functions as this makes the commit
+binary and thus we can't do diffs. Use the `%` notation instead.
 
 *Jupyter notebooks should be converted to `.py` (percent format) or `.md`
 using [Jupytext](https://github.com/mwouts/jupytext).*
 
 Directories should be PascalCase and files should be camelCase.
 
-Python scripts should be formatted with [Black](https://github.com/psf/black)
+Python scripts should be formatted with [Black](https://github.com/psf/black).
+Python scripts should be written to work with input and output arguments.
+`sys.argv` is fine.
 
 ## Dependencies:
 
