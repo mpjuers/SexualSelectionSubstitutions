@@ -9,6 +9,10 @@ localrules: all, fdr, clean, scratchsetup, dirsetup
 configfile: "snakemakeConfig.json"
 
 traits = config["traits"].keys()
+try:
+    scratchdir = config["scratchdir"]
+except KeyError:
+    scratchdir = None
 accession_files = [f for f in listdir("Data/Identifiers/") 
                    if f.endswith(".txt")]
 species = [os.path.basename(f).rstrip(".txt") for f in accession_files]
@@ -96,7 +100,7 @@ rule scratchsetup:
     output:
         directory("Data/Scratch")
     shell:
-        "ln -s " + config["scratchdir"]  + " {output}"
+        "python Scripts/Setup/scratchSetup.py " + str(scratchdir)
 
 
 rule bowtie2index:
