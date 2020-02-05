@@ -1,5 +1,6 @@
 {
     "email": "mpjuers@indiana.edu",
+    "scratchdir": "None",
     "traits": {
         "matingBehavior": {
             "n_snps": 2400000

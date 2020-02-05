@@ -44,8 +44,14 @@ Python scripts should be written to work with input and output arguments.
 ### snakemakeConfig.json:
 
 - email: The user email for Entrez queries.
+- scratchdir: One can specify an alternate directory for many intermediate
+    files on, e.g., a high-speed filesystem. This directory will be symlinked
+    to `Data/Scratch` in the project's root directory. If "None" (or omitted),
+    the scratch directory will be in the same location, but will not be a
+    symlink.
 - traits: One key for each trait. Each entry should include the following keys.
     - n_snps: The number of SNPs identified by the study. Used for FDR correction.
+- 
 
 ### clusterConfig.json:
 
