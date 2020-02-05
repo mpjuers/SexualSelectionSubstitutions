@@ -33,7 +33,6 @@ rule all:
     input:
         expand("Data/Interest/{trait}.interest.txt", trait=traits) ,
         expand("Data/Scratch/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
-        expand("Data/Scratch/Alignments/{trait}.interest.aligned.fasta", trait=traits) ,
         expand("Data/Scratch/Alignments/{trait}.index.1.bt2", trait=traits) ,
         expand(
             "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.sorted.bam",
@@ -74,19 +73,6 @@ rule unzipref:
         "gzip -dc {input} > {output} &&"
         " bwa index {output} &&"
         " samtools faidx {output}"
-
-
-rule align_interest:
-    input:
-        query = "Data/Scratch/InterestSeqs/{trait}.interest.fasta",
-        ref = "Data/Scratch/Genomes/dMelRefSeq.fna"
-    output:
-        align = "Data/Scratch/Alignments/{trait}.interest.aligned.fasta"
-    shadow:
-        "full"
-    shell:
-        "bash Scripts/DataManipulation/alignSeqsOfInterest.sh"
-        " {input.ref} {input.query} {output.align}"
 
 
 rule get_dmel_genome:
