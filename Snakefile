@@ -84,21 +84,19 @@ rule get_dmel_genome:
 
 rule dirsetup:
     output:
-        "Logs/Cluster",
-        "Data/Scratch/tmp"
+        directory("Logs/Cluster"),
+        directory("Data/Scratch/tmp")
     input:
-        "Data/Scratch"
+        directory("Data/Scratch")
     shell:
         "bash Scripts/Setup/dirSetup.sh {output}"
 
 
 rule scratchsetup:
     output:
-        "Data/Scratch"
+        directory("Data/Scratch")
     shell:
-        "if [[ ! -h {output} || ( -h {output} && $(readlink -fn {output}) != " + config["scratchdir"] + " ) ]]; then"
-        " ln -s " + config["scratchdir"]  + " {output};"
-        " fi"
+        "ln -s " + config["scratchdir"]  + " {output}"
 
 
 rule bowtie2index:
