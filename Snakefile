@@ -36,6 +36,7 @@ accessions_flat = [a for sublist in accessions for a in sublist]
 rule all:
     input:
         expand("Data/Interest/{trait}.interest.txt", trait=traits) ,
+        expand("Data/Interest/{trait}.windows.csv", trait=traits) ,
         expand("Data/Scratch/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
         expand("Data/Scratch/Alignments/{trait}.index.1.bt2", trait=traits) ,
         expand(
@@ -103,37 +104,15 @@ rule scratchsetup:
         "python Scripts/Setup/scratchSetup.py " + str(scratchdir)
 
 
-rule bowtie2index:
+rule find_overlap:
     input:
-        "Data/Scratch/Alignments/{trait}.interest.aligned.fasta"
+        "Data/Interest/{trait}.interest.txt"
     output:
-        "Data/Scratch/Alignments/{trait}.index.1.bt2",
-        "Data/Scratch/Alignments/{trait}.index.2.bt2",
-        "Data/Scratch/Alignments/{trait}.index.3.bt2",
-        "Data/Scratch/Alignments/{trait}.index.4.bt2",
-        "Data/Scratch/Alignments/{trait}.index.rev.1.bt2",
-        "Data/Scratch/Alignments/{trait}.index.rev.2.bt2"
+        "Data/Interest/{trait}.windows.csv"
     shell:
-        "bowtie2-build {input} {trait}.index"
-
-
-rule align_bowtie:
-    input:
-        "Data/Scratch/Alignments/{trait}.index.1.bt2",
-        "Data/Scratch/Alignments/{trait}.index.2.bt2",
-        "Data/Scratch/Alignments/{trait}.index.3.bt2",
-        "Data/Scratch/Alignments/{trait}.index.4.bt2",
-        "Data/Scratch/Alignments/{trait}.index.rev.1.bt2",
-        "Data/Scratch/Alignments/{trait}.index.rev.2.bt2",
-        "Data/Identifiers/{species}.txt"
-    output:
-        "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.sorted.bam"
-    shell:
-        "bash Scripts/DataManipulation/sraToBam.sh"
-        " Data/Scratch/Alignments/{trait}.fasta"
-        " {trait}"
-        " Data/Identifiers/{species}.txt"
-        " " + str(config["rules"]["align_bowtie"]["cores"])
+        "python Scripts/DataManipulation/overlapDetector.py"
+        " -i {trait}.interest.txt"
+        " -w " + config["window_size"] + " > Data/Interest/{trait}.windows.csv"
 
 
 # Removes everything except initial dependencies.
