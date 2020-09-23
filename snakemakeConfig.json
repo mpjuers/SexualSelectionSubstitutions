@@ -13,5 +13,6 @@
         "align_bowtie": {
             "cores": 8
         }
-    }
+    },
+    "window_size": 10000
 }
