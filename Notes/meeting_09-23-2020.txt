@@ -1,0 +1,18 @@
+We can empirically estimate the substitution rate by simply counting the number of substitutions (which are the result of fixations in one or another lineage) and dividing by the size of the window. Presumably we could do a bootstrap or something for a confidence interval.
+Without selection, the fixation rate due to genetic drift and mutation is just the mutation rate, mu/generation (Kimura I think, but it's a pretty straightforward intuition). The key insight here is that the fixation rate does not depend on the population size. The substitution rate is 2mu/generation (because there is the same probability of fixation on both branches of the tree). The number of substitutions in each window is (not accounting for stochasticity) the product of 2mu, the number of bases in the window, and the number of generations since the two species have diverged, which we can estimate from published phylogenies. However, since the efficacy of selection *is* affected by the population size, we want to know the probability of fixation with drift, mutation, and selection, of which there are two kinds: viability and sexual.
+Here is a schematic of a phylogenetic process resulting in a pair of substitutions. The x indicates a new mutation. Assuming the tree is of sufficient length for there to be only one fixation per lineage, this will result in a window with two substitutions. However there are still only two different alleles at the end of this process: 01 and 10 (assuming there is no recurrent mutation).
+> t0
+>         |
+>         |\
+>         | \
+>         |  \
+>         x   |
+>         |   |
+>         |   |
+>         |   x
+> t2Ne    |   |
+>         a   b
+>sequence 01  10
+
+This will allow us, for each window, to answer the following question: Given that a certain substitution rate has been observed in a window, what parameter values of s (viability selection, the fitness cost of being ornamented) and a2 (sexual selection) are are required to result in this fixation rate? Because there are two parameters there will be a parameter space rather than simply a number, but we could come up with a few biologically interesting scenarios like very low viability selection and very high viability selection. That is, how strong must sexual selection be in order to result in the observed substitution rate?
+We haven't talked about it yet, but there is another model to consider in addition to the Kirkpatrick model: that of intrasexual selection. This should be a much easier model because it only includes one locus, however it's going to be nonlinear as fitness should be frequency-dependent. I can work out a discrete-time model of this process, hopefully without too much difficulty.
