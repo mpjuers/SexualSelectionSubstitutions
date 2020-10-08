@@ -112,7 +112,7 @@ rule find_overlap:
     shell:
         "python Scripts/DataManipulation/overlapDetector.py"
         " -i {trait}.interest.txt"
-        " -w " + config["window_size"] + " > Data/Interest/{trait}.windows.csv"
+        " -w " + str(config["window_size"]) + " > Data/Interest/{trait}.windows.csv"
 
 
 # Removes everything except initial dependencies.
