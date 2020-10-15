@@ -5,7 +5,7 @@ import itertools
 from os import listdir
 import os.path as path
 
-localrules: all, fdr, clean, scratchsetup, dirsetup
+localrules: all, fdr, clean, dirsetup
 configfile: "snakemakeConfig.json"
 
 traits = config["traits"].keys()
@@ -38,11 +38,7 @@ rule all:
         expand("Data/Interest/{trait}.interest.txt", trait=traits) ,
         expand("Data/Interest/{trait}.windows.csv", trait=traits) ,
         expand("Data/Scratch/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
-        expand("Data/Scratch/Alignments/{trait}.index.1.bt2", trait=traits) ,
-        expand(
-            "Data/Scratch/Alignments/Out/{trait}_{species}_{accession}.sorted.bam",
-            zip, trait=traits_out, species=species_out, accession=accessions_flat
-            ),
+        expand("Data/Interest/{trait}.windows.csv", trait=traits),
         "Data/Scratch/Genomes/dMelRefSeq.fna.gz", 
         "Data/Scratch/Genomes/dMelRefSeq.fna"
 
@@ -89,19 +85,13 @@ rule get_dmel_genome:
 
 rule dirsetup:
     output:
-        directory("Logs/Cluster"),
+        touch(".mkdir_checkpoint")
+    params:
+        directory("Logs/Cluster"), 
         directory("Data/Scratch/tmp")
-    input:
-        directory("Data/Scratch")
     shell:
-        "bash Scripts/Setup/dirSetup.sh {output}"
-
-
-rule scratchsetup:
-    output:
-        directory("Data/Scratch")
-    shell:
-        "python Scripts/Setup/scratchSetup.py " + str(scratchdir)
+        "python Scripts/Setup/scratchSetup.py " + str(scratchdir) + " &&"
+        " mkdir -p {params} || true"
 
 
 rule find_overlap:
@@ -122,4 +112,7 @@ rule clean:
         " Logs"
         " Data/Interest"
         " Data/InterestSeqs"
+        " Data/Scratch/*"
         " Data/Scratch"
+        " .mkdir_checkpoint"
+        " || true"

@@ -110,3 +110,4 @@ Logs/
 
 *.ipynb
 Scratch
+.mkdir_checkpoint
