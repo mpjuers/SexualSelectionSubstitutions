@@ -8,15 +8,5 @@
         "error": "Logs/Cluster/{rule}.{wildcards}.e",
         "output": "Logs/Cluster/{rule}.{wildcards}.o",
         "name": "{rule}.{wildcards}"
-    },
-    "align_interest": {
-        "walltime": "10:00:00",
-        "cores": "2",
-        "memory": "32g"
-    },
-    "align_bowtie": {
-        "walltime": "96:00:00",
-        "cores": "8",
-        "memory": "120gb"
     }
 }

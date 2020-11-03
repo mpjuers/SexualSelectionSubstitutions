@@ -9,6 +9,9 @@ localrules: all, fdr, clean, dirsetup
 configfile: "snakemakeConfig.json"
 
 traits = config["traits"].keys()
+datasets = config["datasets"].keys()
+print(datasets)
+
 try:
     scratchdir = config["scratchdir"]
 except KeyError:
@@ -39,8 +42,9 @@ rule all:
         expand("Data/Interest/{trait}.windows.csv", trait=traits) ,
         expand("Data/Scratch/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
         expand("Data/Interest/{trait}.windows.csv", trait=traits),
-        "Data/Scratch/Genomes/dMelRefSeq.fna.gz", 
-        "Data/Scratch/Genomes/dMelRefSeq.fna"
+        scratchdir + "Genomes/dMelRefSeq.fna.gz", 
+        scratchdir + "Genomes/dMelRefSeq.fna",
+        expand(scratchdir + "GenomeData/{dataset}/.done", dataset=datasets),
 
 
 rule fdr:
@@ -68,8 +72,8 @@ rule get_seqs:
 
 
 rule unzipref:
-    input: "Data/Scratch/Genomes/dMelRefSeq.fna.gz"
-    output: "Data/Scratch/Genomes/dMelRefSeq.fna"
+    input: scratchdir + "Genomes/dMelRefSeq.fna.gz"
+    output: scratchdir + "Genomes/dMelRefSeq.fna"
     shell: 
         "gzip -dc {input} > {output} &&"
         " bwa index {output} &&"
@@ -78,7 +82,7 @@ rule unzipref:
 
 rule get_dmel_genome:
     output:
-        "Data/Scratch/Genomes/dMelRefSeq.fna.gz"
+        scratchdir + "Genomes/dMelRefSeq.fna.gz"
     script:
         "Scripts/GetData/dMelGenome.py"
 
@@ -88,9 +92,9 @@ rule dirsetup:
         touch(".mkdir_checkpoint")
     params:
         directory("Logs/Cluster"), 
-        directory("Data/Scratch/tmp")
+        scratchdir + directory("tmp")
     shell:
-        "python Scripts/Setup/scratchSetup.py " + str(scratchdir) + " &&"
+        "python Scripts/Setup/scratchSetup.py " + scratchdir + " &&"
         " mkdir -p {params} || true"
 
 
@@ -101,8 +105,8 @@ rule find_overlap:
         "Data/Interest/{trait}.windows.csv"
     shell:
         "python Scripts/DataManipulation/overlapDetector.py"
-        " -i {trait}.interest.txt"
-        " -w " + str(config["window_size"]) + " > Data/Interest/{trait}.windows.csv"
+            " -i {trait}.interest.txt"
+            " -w " + str(config["window_size"]) + " > Data/Interest/{trait}.windows.csv"
 
 
 # Removes everything except initial dependencies.
@@ -112,7 +116,6 @@ rule clean:
         " Logs"
         " Data/Interest"
         " Data/InterestSeqs"
-        " Data/Scratch/*"
         " Data/Scratch"
         " .mkdir_checkpoint"
         " || true"
