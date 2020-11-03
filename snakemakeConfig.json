@@ -1,6 +1,6 @@
 {
     "email": "mpjuers@indiana.edu",
-    "scratchdir": "~/Scratch/SexualSelectionSubstitutions/",
+    "scratchdir": "/N/slate/mpjuers/SexualSelection/Data/Scratch",
     "traits": {
         "matingBehavior": {
             "n_snps": 2400000
@@ -9,10 +9,11 @@
             "n_snps": 1914528
         }
     },
+    "datasets": {
+        "d_mel": 4224886,
+        "d_sim": 3616273
+    },
     "rules": {
-        "align_bowtie": {
-            "cores": 8
-        }
     },
     "window_size": 10000
 }
