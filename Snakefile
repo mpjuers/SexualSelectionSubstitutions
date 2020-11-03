@@ -23,52 +23,21 @@ accessions = []
 traits_out = []
 species_out = []
 
-for trait in traits:
-    for f in accession_files:
-        accession = []
-        with open("Data/Identifiers/" + f, 'r') as filestream:
-            for line in filestream:
-                if line.strip():
-                    accession.append(line.strip())
-                    species_out.append(path.basename(f).rstrip(".txt"))
-                    traits_out.append(trait)
-        accessions.append(accession)
-accessions_flat = [a for sublist in accessions for a in sublist]
-
-
 rule all:
     input:
+        expand("Data/SNPData/{trait}.csv", trait=traits),
         expand("Data/Interest/{trait}.interest.txt", trait=traits) ,
         expand("Data/Interest/{trait}.windows.csv", trait=traits) ,
-        expand("Data/Scratch/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
-        expand("Data/Interest/{trait}.windows.csv", trait=traits),
+        expand(scratchdir + "/InterestSeqs/{trait}.interest.nsnps", trait=traits) ,
         scratchdir + "Genomes/dMelRefSeq.fna.gz", 
-        scratchdir + "Genomes/dMelRefSeq.fna",
-        expand(scratchdir + "GenomeData/{dataset}/.done", dataset=datasets),
+        scratchdir + "Genomes/dMelRefSeq.fna"
 
 
-rule fdr:
-    input:
-        data = "Data/SNPData/{trait}.csv"
+rule get_dmel_genome:
     output:
-        "Data/Interest/{trait}.interest.txt"
-    params:
-        n_snps = lambda wildcards: config["traits"][wildcards.trait]["n_snps"]
-    shell:
-         "python Scripts/DataManipulation/fdrCorrection.py"
-         " {params.n_snps} {input.data} {output}"
-
-
-rule get_seqs:
-    input:
-        snps = "Data/Interest/{trait}.interest.txt"
-    output:
-        seqs = "Data/Scratch/InterestSeqs/{trait}.interest.fasta",
-        nsnps = "Data/Scratch/InterestSeqs/{trait}.interest.nsnps"
-    shell:
-        "wc -l {input.snps} > {output.nsnps}"
-        " && python Scripts/GetData/windows.py {input.snps} {output.seqs} "
-        + config["email"]
+        scratchdir + "Genomes/dMelRefSeq.fna.gz"
+    script:
+        "Scripts/GetData/dMelGenome.py"
 
 
 rule unzipref:
@@ -80,22 +49,31 @@ rule unzipref:
         " samtools faidx {output}"
 
 
-rule get_dmel_genome:
-    output:
-        scratchdir + "Genomes/dMelRefSeq.fna.gz"
-    script:
-        "Scripts/GetData/dMelGenome.py"
-
-
 rule dirsetup:
     output:
         touch(".mkdir_checkpoint")
     params:
         directory("Logs/Cluster"), 
-        scratchdir + directory("tmp")
+        directory("Data/Genomes"),
+        scratchdir + directory("tmp"),
+        directory("Data/InterestSeqs"),
+        directory("Data/Interest")
     shell:
         "python Scripts/Setup/scratchSetup.py " + scratchdir + " &&"
         " mkdir -p {params} || true"
+
+
+rule fdr:
+    input:
+        checkpoint = ".mkdir_checkpoint",
+        data = "Data/SNPData/{trait}.csv"
+    output:
+        "Data/Interest/{trait}.interest.txt"
+    params:
+        n_snps = lambda wildcards: config["traits"][wildcards.trait]["n_snps"]
+    shell:
+         "python Scripts/DataManipulation/fdrCorrection.py"
+         " {params.n_snps} {input.data} {output}"
 
 
 rule find_overlap:
@@ -105,8 +83,20 @@ rule find_overlap:
         "Data/Interest/{trait}.windows.csv"
     shell:
         "python Scripts/DataManipulation/overlapDetector.py"
-            " -i {trait}.interest.txt"
-            " -w " + str(config["window_size"]) + " > Data/Interest/{trait}.windows.csv"
+        " -i {input} -w " + str(config["window_size"]) + " > {output}"
+
+
+rule get_seqs:
+    input:
+        windows = "Data/Interest/{trait}.windows.csv",
+        snps = "Data/Interest/{trait}.interest.txt"
+    output:
+        seqs = scratchdir + "/InterestSeqs/{trait}.interest.fasta",
+        nsnps = scratchdir + "/InterestSeqs/{trait}.interest.nsnps"
+    shell:
+        "wc -l {input.snps} > {output.nsnps}"
+        " && python Scripts/GetData/windows.py {input.windows} {output.seqs} "
+        + config["email"] + str(config["window_size"])
 
 
 # Removes everything except initial dependencies.

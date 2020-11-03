@@ -7,7 +7,9 @@ for x in range(1, len(sys.argv)):
     if sys.argv[x] == "-i":
         input_file = str(sys.argv[x + 1])
         view = open(input_file)
-        sys.stderr.write("Your input file is: " + str(sys.argv[x + 1])) # Prints this to Standard error rather than Standard Out
+        sys.stderr.write(
+            "Your input file is: " + str(sys.argv[x + 1])
+        )  # Prints this to Standard error rather than Standard Out
     elif sys.argv[x] == "-w":
         windowlen = int(sys.argv[x + 1])
         sys.stderr.write(

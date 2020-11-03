@@ -2,7 +2,7 @@
 
 # Get sequences from NCBI.
 # To be called from Snakefile.
-# Usage: python windows.py <infile> <outfile> <email>
+# Usage: python windows.py <infile> <outfile> <email> <window_size>
 
 import os
 import sys
@@ -13,20 +13,23 @@ import pandas as pd
 
 
 def main():
-    window_size = 10_000
     snpfile = sys.argv[1]
     outfile = sys.argv[2]
     email = sys.argv[3]
+    window_size = sys.argv[4]
 
-    interest = pd.read_csv(snpfile, header=0)
+    interest = pd.read_csv(
+        snpfile,
+        header=0,
+        dtype={"chrom": str, "start": np.int64, "end": np.int64},
+    )
     interest.columns = interest.columns.str.lower().str.replace(" ", "_")
-    interest[["chrom", "location"]] = (
+    interest[["chrom", "start", "end"]] = (
         interest.iloc[:, 0]
         .str.replace("_[A-Z]{3}?", "")
         .str.replace(" ", "")
         .str.split("_", expand=True)
     )
-    interest["location"] = interest["location"].astype(int)
     interest.index.rename("Index", inplace=True)
     summary = pd.read_csv("Data/dmelSummary.csv")
     summary.index.rename("Index", inplace=True)
@@ -40,12 +43,10 @@ def main():
             id=summary.loc[summary["name"] == row["chrom"], "refseq"].iat[0],
             rettype="fasta",
             strand=1,
-            seq_start=row["location"] - window_size / 2,
-            seq_stop=row["location"] + window_size / 2,
+            seq_start=row["start"],
+            seq_stop=row["end"],
         ) as handle:
             seqs.append(SeqIO.read(handle, "fasta"))
-    if not os.path.exists("Data/InterestSeqs"):
-        os.makedirs("Data/InterestSeqs")
     SeqIO.write(seqs, outfile, "fasta")
 
 
