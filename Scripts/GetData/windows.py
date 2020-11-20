@@ -21,15 +21,19 @@ def main():
     interest = pd.read_csv(
         snpfile,
         header=0,
-        dtype={"chrom": str, "start": np.int64, "end": np.int64},
+        dtype={"chrom": str, "center": np.int64},
     )
     interest.columns = interest.columns.str.lower().str.replace(" ", "_")
-    interest[["chrom", "start", "end"]] = (
+    interest[["chrom", "center"]] = (
         interest.iloc[:, 0]
         .str.replace("_[A-Z]{3}?", "")
         .str.replace(" ", "")
         .str.split("_", expand=True)
     )
+    interest.assign(
+        start=lambda center: center.to_numeric() - window_size,
+        end=lambda center: center.to_numeric() + window_size
+    ) 
     interest.index.rename("Index", inplace=True)
     summary = pd.read_csv("Data/dmelSummary.csv")
     summary.index.rename("Index", inplace=True)

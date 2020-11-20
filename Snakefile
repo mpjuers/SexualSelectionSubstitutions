@@ -86,7 +86,7 @@ rule find_overlap:
         " -i {input} -w " + str(config["window_size"]) + " > {output}"
 
 
-rule get_seqs:
+rule get_reference_seqs:
     input:
         windows = "Data/Interest/{trait}.windows.csv",
         snps = "Data/Interest/{trait}.interest.txt"
